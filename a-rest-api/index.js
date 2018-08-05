@@ -4,17 +4,11 @@ const url = require('url');
 const port = 3000;
 const host = 'localhost';
 
-const server = http.createServer((request, response) => {
-    const parsedUrl = url.parse(request.url, true);
+const server = http.createServer((request, response) => {    const parsedUrl = url.parse(request.url, true);
+    const trimmedPath = parseAndTrimmPath(request);
+    const method = parseHttpMethod(request);
     
-    const path = parsedUrl.pathname;
-    const trimmedPath = path.replace(/^\/+|\/$/g, '');
-
-    const method = request.method;
-
-    console.log(method);
-    
-    response.end('Hello World\n');
+    sendResponse(response);
 
     console.log(`request received on path ${ trimmedPath } with method ${ method }`)
 });
@@ -22,3 +16,16 @@ const server = http.createServer((request, response) => {
 server.listen(port, host, () => {
     console.log(`server up and running on port ${ port }`);
 });
+
+const parseHttpMethod = (request) => request.method;
+
+const parseAndTrimmPath = (request) => {
+    const parsedUrl = url.parse(request.url, true);
+    return trimmPath(parsedUrl.pathname);
+}
+
+const trimmPath = (path) => path.replace(/^\/+|\/$/g, '');
+
+const sendResponse = (response) => {
+    response.end('Hello World\n');
+}
